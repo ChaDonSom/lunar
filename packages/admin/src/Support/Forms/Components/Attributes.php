@@ -29,6 +29,10 @@ class Attributes extends Forms\Components\Group
 
         $this->key('attributeData'.$this->modelClassOverride);
 
+        if (! $this->relationship) {
+            $this->statePath('attribute_data');
+        }
+
         if (blank($this->childComponents)) {
             $this->schema(function (\Filament\Forms\Get $get, Livewire $livewire, ?Model $record) {
                 $modelClass = $this->modelClassOverride ?: $livewire::getResource()::getModel();
@@ -86,9 +90,14 @@ class Attributes extends Forms\Components\Group
                     foreach ($group['fields'] as $field) {
                         $sectionFields[] = AttributeData::getFilamentComponent($field);
                     }
-                    $groupComponents[] = Forms\Components\Section::make($group['model']->translate('name'))
-                        ->schema($sectionFields)
-                        ->statePath('attribute_data');
+                    $groupComponent = Forms\Components\Section::make($group['model']->translate('name'))
+                        ->schema($sectionFields);
+
+                    if ($this->relationship) {
+                        $groupComponent->statePath('attribute_data');
+                    }
+
+                    $groupComponents[] = $groupComponent;
                 }
 
                 return $groupComponents;
@@ -96,6 +105,7 @@ class Attributes extends Forms\Components\Group
         }
 
         $this->mutateStateForValidationUsing(function ($state) {
+
             if (! is_array($state)) {
                 return $state;
             }
