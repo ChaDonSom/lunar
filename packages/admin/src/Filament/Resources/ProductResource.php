@@ -233,6 +233,9 @@ class ProductResource extends BaseResource
     {
         return Attributes::make()
             ->using(ProductVariant::class)
+            ->visible(
+                fn (Model $record) => $record->variants()->withTrashed()->count() === 1
+            )
             ->relationship('variant');
     }
 
