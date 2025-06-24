@@ -23,6 +23,8 @@ class SearchResults extends Data
         #[DataCollectionOf(SearchFacet::class)]
         public array $facets,
         public View $links,
+        public ?string $sortField = null,
+        public string $sortDirection = 'asc'
     ) {}
 
     public function toArray(): array
