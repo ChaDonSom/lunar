@@ -10,6 +10,7 @@ use Filament\Tables\Table;
 use Lunar\Admin\Events\ProductAssociationsUpdated;
 use Lunar\Admin\Filament\Resources\ProductResource;
 use Lunar\Admin\Support\Pages\BaseManageRelatedRecords;
+use Lunar\Base\Enums\Concerns\ProductAssociationTypesProvider;
 use Lunar\Models\Contracts\Product as ProductContract;
 use Lunar\Models\Contracts\ProductAssociation as ProductAssociationContract;
 use Lunar\Models\Product;
@@ -52,11 +53,12 @@ class ManageProductAssociations extends BaseManageRelatedRecords
                     }),
                 Forms\Components\Select::make('type')
                     ->required()
-                    ->options([
-                        ProductAssociation::ALTERNATE => 'Alternate',
-                        ProductAssociation::CROSS_SELL => 'Cross-Sell',
-                        ProductAssociation::UP_SELL => 'Upsell',
-                    ]),
+                    ->options(function () {
+                        $provider = config('lunar.products.association_types');
+                        return collect($provider::cases())->mapWithKeys(
+                            fn (ProductAssociationTypesProvider $type) => [$type->value => $type->label()]
+                        );
+                    }),
             ]);
     }
 

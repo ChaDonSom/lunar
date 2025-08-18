@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Lunar\Base\BaseModel;
+use Lunar\Base\Enums\Concerns\ProductAssociationTypesProvider;
+use Lunar\Base\Enums\ProductAssociationTypes;
 use Lunar\Base\Traits\HasMacros;
 use Lunar\Database\Factories\ProductAssociationFactory;
 
@@ -21,21 +23,6 @@ class ProductAssociation extends BaseModel implements Contracts\ProductAssociati
 {
     use HasFactory;
     use HasMacros;
-
-    /**
-     * Define the cross-sell type.
-     */
-    const CROSS_SELL = 'cross-sell';
-
-    /**
-     * Define the upsell type.
-     */
-    const UP_SELL = 'up-sell';
-
-    /**
-     * Define the alternate type.
-     */
-    const ALTERNATE = 'alternate';
 
     /**
      * Define the fillable attributes.
@@ -77,7 +64,8 @@ class ProductAssociation extends BaseModel implements Contracts\ProductAssociati
      */
     public function scopeCrossSell(Builder $query): Builder
     {
-        return $query->type(self::CROSS_SELL);
+        $typesProvider = config('lunar.products.association_types', ProductAssociationTypes::class);
+        return $query->type($typesProvider::CROSS_SELL);
     }
 
     /**
@@ -85,7 +73,8 @@ class ProductAssociation extends BaseModel implements Contracts\ProductAssociati
      */
     public function scopeUpSell(Builder $query): Builder
     {
-        return $query->type(self::UP_SELL);
+        $typesProvider = config('lunar.products.association_types', ProductAssociationTypes::class);
+        return $query->type($typesProvider::UP_SELL);
     }
 
     /**
@@ -93,14 +82,19 @@ class ProductAssociation extends BaseModel implements Contracts\ProductAssociati
      */
     public function scopeAlternate(Builder $query): Builder
     {
-        return $query->type(self::ALTERNATE);
+        $typesProvider = config('lunar.products.association_types', ProductAssociationTypes::class);
+        return $query->type($typesProvider::ALTERNATE);
     }
 
     /**
      * Apply the type scope.
      */
-    public function scopeType(Builder $query, string $type): Builder
+    public function scopeType(Builder $query, ProductAssociationTypesProvider|string $type): Builder
     {
+        if ($type instanceof ProductAssociationTypesProvider) {
+            $type = $type->value;
+        }
+
         return $query->whereType($type);
     }
 }
