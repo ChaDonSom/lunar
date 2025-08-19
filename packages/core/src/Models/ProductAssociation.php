@@ -65,6 +65,7 @@ class ProductAssociation extends BaseModel implements Contracts\ProductAssociati
     public function scopeCrossSell(Builder $query): Builder
     {
         $typesProvider = config('lunar.products.association_types', ProductAssociationTypes::class);
+
         return $query->type($typesProvider::CROSS_SELL);
     }
 
@@ -74,6 +75,7 @@ class ProductAssociation extends BaseModel implements Contracts\ProductAssociati
     public function scopeUpSell(Builder $query): Builder
     {
         $typesProvider = config('lunar.products.association_types', ProductAssociationTypes::class);
+
         return $query->type($typesProvider::UP_SELL);
     }
 
@@ -83,6 +85,7 @@ class ProductAssociation extends BaseModel implements Contracts\ProductAssociati
     public function scopeAlternate(Builder $query): Builder
     {
         $typesProvider = config('lunar.products.association_types', ProductAssociationTypes::class);
+
         return $query->type($typesProvider::ALTERNATE);
     }
 

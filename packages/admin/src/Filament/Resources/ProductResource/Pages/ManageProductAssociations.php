@@ -14,7 +14,6 @@ use Lunar\Base\Enums\Concerns\ProductAssociationTypesProvider;
 use Lunar\Models\Contracts\Product as ProductContract;
 use Lunar\Models\Contracts\ProductAssociation as ProductAssociationContract;
 use Lunar\Models\Product;
-use Lunar\Models\ProductAssociation;
 
 class ManageProductAssociations extends BaseManageRelatedRecords
 {
@@ -55,6 +54,7 @@ class ManageProductAssociations extends BaseManageRelatedRecords
                     ->required()
                     ->options(function () {
                         $provider = config('lunar.products.association_types');
+
                         return collect($provider::cases())->mapWithKeys(
                             fn (ProductAssociationTypesProvider $type) => [$type->value => $type->label()]
                         );
